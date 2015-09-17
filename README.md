@@ -10,30 +10,34 @@ This image may also be used for individual backup and/or restore functionality.
 
 ## Usage:
 
-    docker run -d \
-        --env MONGODB_BACKUP_HOST=mongodb.backup.host \
-        --env MONGODB_BACKUP_PORT=27017 \
-        --env MONGODB_BACKUP_USER=admin \
-        --env MONGODB_BACKUP_PASS=password \
-        --env MONGODB_RESTORE_HOST=mongodb.restore.host \
-        --env MONGODB_RESTORE_PORT=27017 \
-        --env MONGODB_RESTORE_USER=admin \
-        --env MONGODB_RESTORE_PASS=password \
-        --env AWS_ACCESS_KEY_ID=changeme \
-        --env AWS_SECRET_ACCESS_KEY=changeme \
-        --env AWS_DEFAULT_REGION=us-east-1 \
-        --env S3_BUCKET=changeme \
-        --env S3_PATH=mongodb \
-        --env S3_BACKUP=yes \
-        --volume host.folder:/backup \
-        --name mongodb-sync \
-        agaveapi/mongodb-sync
+```
+docker run -d \
+    --env MONGODB_BACKUP_HOST=mongodb.backup.host \
+    --env MONGODB_BACKUP_PORT=27017 \
+    --env MONGODB_BACKUP_USER=admin \
+    --env MONGODB_BACKUP_PASS=password \
+    --env MONGODB_RESTORE_HOST=mongodb.restore.host \
+    --env MONGODB_RESTORE_PORT=27017 \
+    --env MONGODB_RESTORE_USER=admin \
+    --env MONGODB_RESTORE_PASS=password \
+    --env AWS_ACCESS_KEY_ID=changeme \
+    --env AWS_SECRET_ACCESS_KEY=changeme \
+    --env AWS_DEFAULT_REGION=us-east-1 \
+    --env S3_BUCKET=changeme \
+    --env S3_PATH=mongodb \
+    --env S3_BACKUP=yes \
+    --volume host.folder:/backup \
+    --name mongodb-sync \
+    agaveapi/mongodb-sync
+```
 
 Moreover, if you link `agaveapi/mongodb-sync` to a mongodb container(e.g. `tutum/mongodb`) with an alias named mongodb-backup, this image will try to auto load the source `host`, `port`, `user`, `pass` if possible. The same is true if you link `agaveapi/mongodb-sync` to a mongodb container(e.g. `tutum/mongodb`) with an alias named mongodb-restore, this image will try to auto load the destination `host`, `port`, `user`, `pass` if possible.
 
-    docker run -d -p 27017:27017 -p 28017:28017 -e MONGODB_PASS="mypass" --name mongodb-backup tutum/mongodb
-    docker run -d -p 37017:27017 -p 38017:28017 -e MONGODB_PASS="mypass" --name mongodb-restore tutum/mongodb
-    docker run -d --link mongodb-backup:mongodb-backup --link mongodb-restore:mongodb-restore -v host.folder:/backup agaveapi/mongodb-sync
+```
+docker run -d -p 27017:27017 -p 28017:28017 -e MONGODB_PASS="mypass" --name mongodb-backup tutum/mongodb
+docker run -d -p 37017:27017 -p 38017:28017 -e MONGODB_PASS="mypass" --name mongodb-restore tutum/mongodb
+docker run -d --link mongodb-backup:mongodb-backup --link mongodb-restore:mongodb-restore -v host.folder:/backup agaveapi/mongodb-sync
+```
 
 ## Parameters
 
@@ -68,66 +72,78 @@ Moreover, if you link `agaveapi/mongodb-sync` to a mongodb container(e.g. `tutum
 
 To run this image only as a backup process:
 
-    docker run -d \
-        --env MONGODB_BACKUP_HOST=mongodb.backup.host \
-        --env MONGODB_BACKUP_PORT=27017 \
-        --env MONGODB_BACKUP_USER=admin \
-        --env MONGODB_BACKUP_PASS=password \
-        --volume host.folder:/backup \
-        --name mongodb-sync \
-        agaveapi/mongodb-sync backup
+```
+docker run -d \
+    --env MONGODB_BACKUP_HOST=mongodb.backup.host \
+    --env MONGODB_BACKUP_PORT=27017 \
+    --env MONGODB_BACKUP_USER=admin \
+    --env MONGODB_BACKUP_PASS=password \
+    --volume host.folder:/backup \
+    --name mongodb-sync \
+    agaveapi/mongodb-sync backup
+```
 
 To archive copies of the the backups to S3:
 
-    docker run -d \
-        --env MONGODB_BACKUP_HOST=mongodb.backup.host \
-        --env MONGODB_BACKUP_PORT=27017 \
-        --env MONGODB_BACKUP_USER=admin \
-        --env MONGODB_BACKUP_PASS=password \
-        --env AWS_ACCESS_KEY_ID=changeme \
-        --env AWS_SECRET_ACCESS_KEY=changeme \
-        --env AWS_DEFAULT_REGION=us-east-1 \
-        --env S3_BUCKET=changeme \
-        --env S3_PATH=mongodb \
-        --env S3_BACKUP=yes \
-        --volume host.folder:/backup \
-        --name mongodb-sync \
-        agaveapi/mongodb-sync backup
+```
+docker run -d \
+    --env MONGODB_BACKUP_HOST=mongodb.backup.host \
+    --env MONGODB_BACKUP_PORT=27017 \
+    --env MONGODB_BACKUP_USER=admin \
+    --env MONGODB_BACKUP_PASS=password \
+    --env AWS_ACCESS_KEY_ID=changeme \
+    --env AWS_SECRET_ACCESS_KEY=changeme \
+    --env AWS_DEFAULT_REGION=us-east-1 \
+    --env S3_BUCKET=changeme \
+    --env S3_PATH=mongodb \
+    --env S3_BACKUP=yes \
+    --volume host.folder:/backup \
+    --name mongodb-sync \
+    agaveapi/mongodb-sync backup
+```
 
 ## Restore from a backup
 
 To see the list of backups in a running backup container, you can run:
 
-    docker exec mongodb-sync ls /backup
+```
+docker exec mongodb-sync ls /backup
+```
 
 To restore a mongodb database from an existing backup on disk
 
-    docker run -it --rm \
-        --env MONGODB_RESTORE_HOST=mongodb.restore.host \
-        --env MONGODB_RESTORE_PORT=27017 \
-        --env MONGODB_RESTORE_USER=admin \
-        --env MONGODB_RESTORE_PASS=password \
-        --volume /existing/local/backup/folder:/backup \
-        agaveapi/mongodb-sync /restore.sh /backup/2015.08.06.171901
+```
+docker run -it --rm \
+    --env MONGODB_RESTORE_HOST=mongodb.restore.host \
+    --env MONGODB_RESTORE_PORT=27017 \
+    --env MONGODB_RESTORE_USER=admin \
+    --env MONGODB_RESTORE_PASS=password \
+    --volume /existing/local/backup/folder:/backup \
+    agaveapi/mongodb-sync /restore.sh /backup/2015.08.06.171901
+```
 
 ## Run as a one-off sync process
 
 If you have need to run one-off sync processes such as creating snapshots of your production db for testing in a QA environment, you can invoke this image as needed using the following command.
 
-    docker run -d --rm \
-        --env MONGODB_BACKUP_HOST=mongodb.backup.host \
-        --env MONGODB_BACKUP_PORT=27017 \
-        --env MONGODB_BACKUP_USER=admin \
-        --env MONGODB_BACKUP_PASS=password \
-        --env MONGODB_RESTORE_HOST=mongodb.restore.host \
-        --env MONGODB_RESTORE_PORT=27017 \
-        --env MONGODB_RESTORE_USER=admin \
-        --env MONGODB_RESTORE_PASS=password \
-        agaveapi/mongodb-sync /sync.sh
+```
+docker run -d --rm \
+    --env MONGODB_BACKUP_HOST=mongodb.backup.host \
+    --env MONGODB_BACKUP_PORT=27017 \
+    --env MONGODB_BACKUP_USER=admin \
+    --env MONGODB_BACKUP_PASS=password \
+    --env MONGODB_RESTORE_HOST=mongodb.restore.host \
+    --env MONGODB_RESTORE_PORT=27017 \
+    --env MONGODB_RESTORE_USER=admin \
+    --env MONGODB_RESTORE_PASS=password \
+    agaveapi/mongodb-sync /sync.sh
+```
 
 If your existing mongo images are already running in containers, you can do the following:
 
-    docker run -d --rm \
-        --links mongodb-prod:mongodb-backup \
-        --links mongodb-qa:mongodb-restore \
-        agaveapi/mongodb-sync /sync.sh
+```
+docker run -d --rm \
+    --links mongodb-prod:mongodb-backup \
+    --links mongodb-qa:mongodb-restore \
+    agaveapi/mongodb-sync /sync.sh
+```

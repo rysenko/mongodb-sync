@@ -1,5 +1,15 @@
 #!/bin/bash
 
+function docron() {
+
+  touch /mongo_sync.log
+  tail -f /mongo_sync.log &
+  crontab /crontab.conf
+  echo "=> Running cron job"
+  exec cron -f
+
+}
+
 if [[ "${1}" == "backup" ]]; then
 
     if [ -n "${INIT_BACKUP}" ]; then
@@ -43,12 +53,3 @@ else
   exec "$@"
 
 fi
-
-function docron() {
-
-  tail -f /mongo_sync.log &
-  crontab /crontab.conf
-  echo "=> Running cron job"
-  exec cron -f
-
-}
