@@ -1,5 +1,5 @@
 #!/bin/bash
 
-/delete.sh
+/backup.sh
 
-/restore.sh 
+/restore.sh
