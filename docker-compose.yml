@@ -24,7 +24,7 @@ mongoqa:
 ##############################################################
 
 mongodbsync:
-  image: 'tutum/mongodb-sync:latest'
+  image: 'agaveapi/mongodb-sync:latest'
   links:
     - 'mongoprod:mongodb-backup'
     - 'mongoqa:mongodb-restore'
