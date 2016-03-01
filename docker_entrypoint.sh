@@ -10,6 +10,8 @@ function docron() {
 
 }
 
+env > /crontab.conf
+
 if [[ "${1}" == "backup" ]]; then
 
     if [ -n "${INIT_BACKUP}" ]; then
