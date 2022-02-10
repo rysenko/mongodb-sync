@@ -6,7 +6,7 @@ function docron() {
   tail -f /mongo_sync.log &
   crontab /crontab.conf
   echo "=> Running cron job"
-  exec cron -f
+  exec crond -f
 
 }
 
