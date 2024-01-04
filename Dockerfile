@@ -1,7 +1,7 @@
 FROM alpine:edge
 
 RUN apk add --no-cache bash mongodb-tools py-pip && \
-  pip install awscli && \
+  pip install awscli --break-system-packages && \
   mkdir /backup
 
 ENV CRON_TIME="0 0 * * *"
