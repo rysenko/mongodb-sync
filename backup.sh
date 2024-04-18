@@ -15,7 +15,6 @@ MONGODB_PASS=${MONGODB_BACKUP_PASS:-${MONGODB_BACKUP_ENV_MONGODB_PASS}}
 
 BACKUP_NAME=$(date +%Y.%m.%d.%H%M%S)
 BACKUP_CMD="mongodump --out /backup/${BACKUP_NAME} --host ${MONGODB_BACKUP_HOST} --port ${MONGODB_BACKUP_PORT} ${USER_BACKUP_STR}${PASS_BACKUP_STR}${DB_BACKUP_STR} ${EXTRA_BACKUP_OPTS}"
-MAX_BACKUPS=${MAX_BACKUPS}
 
 echo "=> Backup started"
 if ${BACKUP_CMD} ;then
@@ -43,16 +42,9 @@ if ${BACKUP_CMD} ;then
 else
 
     echo "   Backup failed"
-    rm -rf /backup/${BACKUP_NAME}
 
 fi
 
-if [ -n "${MAX_BACKUPS}" ]; then
-    while [ $(ls /backup -N1 | wc -l) -gt ${MAX_BACKUPS} ];
-    do
-        BACKUP_TO_BE_DELETED=$(ls /backup -N1 | sort | head -n 1)
-        echo "   Deleting backup ${BACKUP_TO_BE_DELETED}"
-        rm -rf /backup/${BACKUP_TO_BE_DELETED}
-    done
-fi
+rm -rf /backup/${BACKUP_NAME}
+
 echo "=> Backup done"
