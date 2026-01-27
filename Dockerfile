@@ -11,7 +11,10 @@ ENV AWS_DEFAULT_REGION=us-east-1
 ADD docker_entrypoint.sh /docker_entrypoint.sh
 ADD backup.sh /backup.sh
 ADD restore.sh /restore.sh
+ADD restore_legacy.sh /restore_legacy.sh
 ADD sync.sh /sync.sh
+
+RUN chmod +x /docker_entrypoint.sh /backup.sh /restore.sh /restore_legacy.sh /sync.sh
 
 VOLUME ["/backup"]
 
